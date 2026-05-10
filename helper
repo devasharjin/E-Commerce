@@ -1,0 +1,10 @@
+npm i express dotenv mongoose
+
+
+
+
+
+
+
+
+npm i zod cors morgan
