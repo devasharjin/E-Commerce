@@ -1,12 +1,15 @@
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 
 export async function connectToDB (){
     try {
-        await mongoose.connect(process.env.MONGO_URI as string)
+        const URI : string = process.env.MONGO_URI as string
+
+        await mongoose.connect(URI)
         console.log('DB connected')
     } catch (error) {
-        console.log('db connect failed');
+        console.log('db connection failed');
+        console.log(error)
         process.exit(1)
               
     }

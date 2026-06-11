@@ -6,7 +6,7 @@ export type ApiEnvelope<T> = {
     errors ? : Array<{message: string ; code ? : string}>
 }
 
-export function ok<T>(data : T, meta : Record<string,unknown>): ApiEnvelope<T> {
+export function ok<T>(data : T, meta ?: Record<string,unknown>): ApiEnvelope<T> {
     return  {
             status : 'success',
             data,
