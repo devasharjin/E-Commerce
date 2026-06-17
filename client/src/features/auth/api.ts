@@ -1,7 +1,6 @@
 import { apiGet, apiPost } from "@/lib/api";
 import type { MeResponse } from "./type";
 
-
 /**
  * Redirect user to backend Google OAuth
  */
@@ -19,3 +18,4 @@ export function getMe() {
 export function logout() {
   return apiPost<any>("/auth/logout");
 }
+

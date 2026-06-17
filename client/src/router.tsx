@@ -12,16 +12,14 @@ import AdminCoupons from "./pages/admin/Coupons";
 import AdminOrders from "./pages/admin/Orders";
 import AdminProducts from "./pages/admin/Products";
 import AdminSettings from "./pages/admin/Settings";
+import AuthProvider from "./features/auth/AuthProvider";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <CustomerLayout />,
+    element: <AuthProvider />,
     children: [
-      {
-        index: true,
-        element: <CustomerHomePage />
-      },
+      // Public-only routes (outside CustomerLayout)
       {
         element: <PublicOnlyLayout />,
         children: [
@@ -30,54 +28,66 @@ export const router = createBrowserRouter([
             element: <GoogleSignIn />,
           },
         ],
-      }, {
-        element: <ProtectedLayout />,
+      },
+
+      // Customer routes
+      {
+        element: <CustomerLayout />,
         children: [
           {
-            path: "profile",
-            element: <CustomerProfile />,
+            index: true,
+            element: <CustomerHomePage />,
           },
-        ]
-      }
-    ],
-  },
-  {
-    path: 'admin',
-    children: [
-      {
-        element: <ProtectedLayout />,
-        children: [
 
           {
-            element: <RoleGuardLayout allow={['admin']} />,
+            element: <ProtectedLayout />,
+            children: [
+              {
+                path: "profile",
+                element: <CustomerProfile />,
+              },
+            ],
+          },
+        ],
+      },
+
+      // Admin routes
+      {
+        path: "admin",
+        element: <ProtectedLayout />,
+        children: [
+          {
+            element: <RoleGuardLayout allow={["admin"]} />,
             children: [
               {
                 element: <AdminLayout />,
                 children: [
                   {
                     index: true,
-                    element: <AdminDashboard />
+                    element: <AdminDashboard />,
                   },
                   {
-                    path : 'coupons',
-                    element: <AdminCoupons/>
+                    path: "coupons",
+                    element: <AdminCoupons />,
                   },
                   {
-                    path : 'orders',
-                    element: <AdminOrders/>
+                    path: "orders",
+                    element: <AdminOrders />,
                   },
                   {
-                    path : 'products',
-                    element: <AdminProducts/>
+                    path: "products",
+                    element: <AdminProducts />,
                   },
                   {
-                    path : 'settings',
-                    element: <AdminSettings/>
+                    path: "settings",
+                    element: <AdminSettings />,
                   },
-                ]
-              }]
-          }
-        ]
-      }]
-  }
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ]);

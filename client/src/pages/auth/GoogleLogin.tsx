@@ -6,11 +6,11 @@ export default function GoogleSignIn() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-5rem)] items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100 px-6">
       <div className="w-full max-w-md">
-        <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-8 shadow-sm backdrop-blur">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+        <div className="rounded-3xl border border-slate-200/60 bg-white p-10 shadow-xl shadow-slate-200/50">
+          {/* Logo */}
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
               <svg
                 viewBox="0 0 48 48"
                 className="h-7 w-7"
@@ -34,18 +34,21 @@ export default function GoogleSignIn() {
               </svg>
             </div>
 
-            <h1 className="text-3xl font-bold text-slate-900">
-              Welcome Back
+          {/* Heading */}
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Welcome back
             </h1>
 
-            <p className="mt-2 text-sm text-slate-500">
-              Sign in to access your account and continue shopping.
+            <p className="mt-3 text-sm leading-relaxed text-slate-500">
+              Sign in to your account and continue your shopping experience.
             </p>
           </div>
 
+          {/* Google Button */}
           <button
             onClick={handleLogin}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 font-medium text-slate-700 shadow-sm transition-all hover:shadow-md"
+            className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 font-medium text-slate-700 transition-all duration-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md active:scale-[0.98]"
           >
             <svg
               viewBox="0 0 48 48"
@@ -69,10 +72,20 @@ export default function GoogleSignIn() {
               />
             </svg>
 
-            Continue with Google
+            <span>Continue with Google</span>
           </button>
 
-          <p className="mt-6 text-center text-xs text-slate-400">
+          {/* Divider */}
+          <div className="my-8 flex items-center gap-4">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-xs uppercase tracking-wider text-slate-400">
+              Secure Login
+            </span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-xs leading-relaxed text-slate-400">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>

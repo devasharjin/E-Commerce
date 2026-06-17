@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { AsyncHandler } from "../../utils/AsyncHandler.js";
-import { getMe, googleCallback, googleLogin, logoutUser } from "../../utils/auth/google.js";
+import { getMe, googleCallback, googleLogin, logoutUser, refreshToken } from "../../utils/auth/google.js";
 import { requireAuth } from "../../middleware/auth.js";
 
 export const AuthRouter = Router();
@@ -36,3 +36,8 @@ AuthRouter.get(
   requireAuth,
   AsyncHandler(getMe)
 );
+
+AuthRouter.post(
+  "/refresh",
+  AsyncHandler(refreshToken)
+)

@@ -3,7 +3,8 @@ import type { Request, Response } from "express";
 import User from "../../models/userModel.js";
 import { generateAccessToken, generateRefreshToken } from "./jwt.js";
 import { extractDbUser, type AuthRequest } from "../../middleware/auth.js";
-import { ok } from "../envelope.js";
+import { fail, ok } from "../envelope.js";
+import jwt from "jsonwebtoken";
 
 
 export const googleClient = new OAuth2Client(
@@ -143,9 +144,9 @@ export const logoutUser = async (req: AuthRequest, res: Response) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
 
- return res.json(
-  ok({ message: "Logout successful" })
-);
+  return res.json(
+    ok({ message: "Logout successful" })
+  );
 };
 
 //me
@@ -154,11 +155,68 @@ export const getMe = async (req: Request, res: Response) => {
   const user = await extractDbUser(req);
 
   res.json(
-  ok({
-    googleId: user.googleId,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  })
-);
+    ok({
+      googleId: user.googleId,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    })
+  );
 };
+
+//refreshtoken
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(400).json(
+      fail("Refresh token missing")
+    );
+  }
+
+  const payload = jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET!
+  ) as { userId: string };
+
+  const user = await User.findById(payload.userId);
+
+  if (!user) {
+    return res.status(400).json(
+      fail("User not found")
+    );
+  }
+
+  if (user.refreshToken !== refreshToken) {
+    return res.status(400).json(
+      fail("Invalid refresh token")
+    );
+  }
+
+  const newAccessToken = generateAccessToken(user);
+  const newRefreshToken = generateRefreshToken(user);
+
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  res.cookie("accessToken", newAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000,
+  });
+
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.json(
+    ok({
+      message: "Token refreshed",
+    })
+  );
+}

@@ -1,13 +1,11 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import { env } from "./env";
 import type { ApiEnvelope } from "./types";
+import { useAuthStore } from "@/features/auth/store";
 
 
 const api = axios.create({
   baseURL: env.backendUrl,
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true, 
 });
 
@@ -17,19 +15,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    const url = originalRequest?.url || "";
-
-    // ❌ DO NOT retry auth endpoints
-    const isAuthRoute =
-      url.includes("/auth/me") ||
-      url.includes("/auth/refresh") ||
-      url.includes("/auth/google");
-
-    if (isAuthRoute) {
-      return Promise.reject(error);
-    }
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
 
       try {
@@ -41,7 +30,8 @@ api.interceptors.response.use(
 
         return api(originalRequest);
       } catch (err) {
-        window.location.href = "/signin";
+        useAuthStore.getState().setUser(null);
+        return Promise.reject(err);
       }
     }
 

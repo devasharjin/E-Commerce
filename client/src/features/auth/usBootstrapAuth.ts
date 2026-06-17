@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuthStore } from "./store";
-import { getMe } from "./api";
+import { getMe, } from "./api";
 
 export function useBootstrapAuth() {
   const { setLoading, setError, setUser, clearAuth } =

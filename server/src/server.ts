@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import dns from 'dns';
 import cookieParser from "cookie-parser";
 import { AuthRouter } from "./routes/auth/auth.route.js";
+import { AdminProductRouter } from "./routes/admin/product.route.js";
 
 
 
@@ -37,6 +38,7 @@ app.use(
 //routes
 
 app.use("/auth", AuthRouter);
+app.use("/admin", AdminProductRouter)
 
 app.use(notFound)
 app.use(ErrorHandler)
