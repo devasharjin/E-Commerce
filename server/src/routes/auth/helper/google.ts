@@ -1,10 +1,10 @@
 import { OAuth2Client } from "google-auth-library";
 import type { Request, Response } from "express";
-import User from "../../models/userModel.js";
 import { generateAccessToken, generateRefreshToken } from "./jwt.js";
-import { extractDbUser, type AuthRequest } from "../../middleware/auth.js";
-import { fail, ok } from "../envelope.js";
 import jwt from "jsonwebtoken";
+import { extractDbUser, type AuthRequest } from "../../../middleware/auth.js";
+import User from "../../../models/user.js";
+import { fail, ok } from "../../../utils/envelope.js";
 
 
 export const googleClient = new OAuth2Client(

@@ -1,29 +1,31 @@
 import mongoose from "mongoose";
 
 export const addressSchema = new mongoose.Schema({
-    fullname: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    address: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    city: {
-        type: String,
-        required: true
-    },
-    pinCode: {
-        type: String,
-        required: true
-    },
-    isDefault: {
-        type: Boolean,
-        default: false
-    }
-}, { _id: false });
+  fullName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  pinCode: {
+    type: String,
+    required: true
+  },
+  isDefault: {
+    type: Boolean,
+    default: false
+  }
+}, {
+  timestamps: false,
+},);
 
 export const userSchema = new mongoose.Schema({
   googleId: {
@@ -48,7 +50,7 @@ export const userSchema = new mongoose.Schema({
     min: 0
   },
 
-  address: {
+  addresses: {
     type: [addressSchema],
     default: []
   },
@@ -64,7 +66,7 @@ export const userSchema = new mongoose.Schema({
   googleRefreshToken: String,
   googleTokenExpiry: Date,
 
-  
+
   refreshToken: {
     type: String,
     default: null

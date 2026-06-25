@@ -2,13 +2,13 @@ export const BRANDS = [
   "Nike",
   "Adidas",
   "Puma",
-  "Zara",
-  "H&M",
+  "Reebok",
+  "Sparx",
+  "Sony",
+  "Woodland",
+  "Red Tape",
   "Levi's",
-  "Uniqlo",
-  "Mango",
-  "Calvin Klein",
-  "Tommy Hilfiger",
+  "Zara",
 ] as const;
 
 export const SIZE_OPTIONS = ["S", "M", "L", "XL"] as const;
