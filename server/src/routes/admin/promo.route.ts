@@ -7,155 +7,182 @@ import type { Document } from "mongoose";
 import { requireFound, requireText } from "../../utils/helper.js";
 import { AppError } from "../../utils/AppError.js";
 
+const AdminPromoRoute = Router();
 
-const AdminPromoRoute = Router()
-
-AdminPromoRoute.use(requireAuth)
-AdminPromoRoute.use(requireAdmin)
+AdminPromoRoute.use(requireAuth);
+AdminPromoRoute.use(requireAdmin);
 
 export interface IPromo extends Document {
-    code: string,
-    percentage: number,
-    count: number,
-    minimumOrderValue: number,
-    startAt: Date,
-    endAt: Date,
-    createdAt: Date,
-    updatedAt: Date
+  code: string;
+  percentage: number;
+  count: number;
+  minimumOrderValue: number;
+  startAt: Date;
+  endAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-async function getAllPromos() {
-    const promos = await Promo.find({}).sort({ createdAt: -1 })
+async function getAllPromos(query?: string) {
+  const filter = query
+    ? {
+        code: {
+          $regex: query,
+          $options: "i",
+        },
+      }
+    : {};
 
-    return promos
+  const promos = await Promo.find(filter).sort({ createdAt: -1 });
+
+  return promos;
 }
 
 function parsePromoPayload(req: Request) {
-    const code = String(req.body.code || "").trim().toUpperCase()
-    const percentage = Number(req.body.percentage)
-    const count = Number(req.body.count)
-    const minimumOrderValue = Number(req.body.minimumOrderValue)
-    const startAt = new Date(req.body.startAt)
-    const endAt = new Date(req.body.endAt)
+  const code = String(req.body.code || "")
+    .trim()
+    .toUpperCase();
+  const percentage = Number(req.body.percentage);
+  const count = Number(req.body.count);
+  const minimumOrderValue = Number(req.body.minimumOrderValue);
+  const startAt = new Date(req.body.startAt);
+  const endAt = new Date(req.body.endAt);
+  
+  console.log('code', code);
+  console.log('percentage' ,percentage);
+  console.log('count' ,count);
+  console.log('minimumOrderValue' ,minimumOrderValue);
+  console.log('startAt' ,startAt);
+  console.log('endAt' ,endAt);
+  
 
-    requireText(code, "code is required")
+  requireText(code, "code is required");
 
-    if (Number.isNaN(percentage) || percentage < 1 || percentage > 100) {
-        throw new AppError(400, 'Percentage must be between 1 and 100')
-    }
+  if (Number.isNaN(percentage) || percentage < 1 || percentage > 100) {
+    throw new AppError(400, "Percentage must be between 1 and 100");
+  }
 
-    if (Number.isNaN(count) || count < 1) {
-        throw new AppError(400, "Promo count must be atleast 1")
-    }
+  if (Number.isNaN(count) || count < 1) {
+    throw new AppError(400, "Promo count must be atleast 1");
+  }
 
-    if (Number.isNaN(minimumOrderValue) || minimumOrderValue < 0) {
-        throw new AppError(400, "Promo count must be atleast 0 or more")
-    }
+  if (Number.isNaN(minimumOrderValue) || minimumOrderValue < 0) {
+    throw new AppError(400, "Promo count must be atleast 0 or more");
+  }
 
+  if (Number.isNaN(startAt.getTime())) {
+    throw new AppError(400, "Valid start time is required");
+  }
 
-    if (Number.isNaN(startAt.getTime())) {
-        throw new AppError(400, "Valid start time is required");
-    }
+  if (Number.isNaN(endAt.getTime())) {
+    throw new AppError(400, "Valid end time is required");
+  }
 
-    if (Number.isNaN(endAt.getTime())) {
-        throw new AppError(400, "Valid end time is required");
-    }
+  if (endAt <= startAt) {
+    throw new AppError(400, "End time should be after start time");
+  }
 
-    if (endAt <= startAt) {
-        throw new AppError(400, "End time should be after start time");
-    }
-
-    return {
-        code,
-        percentage,
-        count,
-        minimumOrderValue,
-        startAt,
-        endAt
-    }
+  return {
+    code,
+    percentage,
+    count,
+    minimumOrderValue,
+    startAt,
+    endAt,
+  };
 }
 
-AdminPromoRoute.get('/promos',
-    AsyncHandler(async (req: Request, res: Response) => {
-        res.json(ok({
-            promos: await getAllPromos()
-        }))
-    })
-)
+AdminPromoRoute.get(
+  "/promos",
+  AsyncHandler(async (req: Request, res: Response) => {
+    const search = String(req.query.search || "").trim();
 
-AdminPromoRoute.post('/promos',
-    AsyncHandler(async (req: Request, res: Response) => {
-        const payload = parsePromoPayload(req)
+    res.json(
+      ok({
+        promos: await getAllPromos(search),
+      }),
+    );
+  }),
+);
 
-        const isExist = await Promo.findOne({ code: payload.code })
+AdminPromoRoute.post(
+  "/promos",
+  AsyncHandler(async (req: Request, res: Response) => {
+    const payload = parsePromoPayload(req);
 
-        if (isExist) {
-            throw new AppError(400, "Promo code already exists")
-        }
+    const isExist = await Promo.findOne({ code: payload.code });
 
-        await Promo.create(payload)
+    if (isExist) {
+      throw new AppError(400, "Promo code already exists");
+    }
 
-        res.json(ok({
-            promos: await getAllPromos()
-        }))
+    await Promo.create(payload);
 
-    })
+    res.json(
+      ok({
+        promos: await getAllPromos(),
+      }),
+    );
+  }),
+);
+AdminPromoRoute.put(
+  "/promos/:id",
+  AsyncHandler(async (req: Request, res: Response) => {
+    const PromoId = String(req.params.id || "").trim();
 
-)
-AdminPromoRoute.put('/promos/:id',
-    AsyncHandler(async (req: Request, res: Response) => {
-        const PromoId = String(req.params.id || "").trim()
+    const existingPromo = await Promo.findById(PromoId);
 
-        const existingPromo = await Promo.findById(PromoId)
+    if (!existingPromo) {
+      throw new AppError(400, "Promo not found");
+    }
 
-        if (!existingPromo) {
-            throw new AppError(400, 'Promo not found')
-        }
+    const payload = parsePromoPayload(req);
 
-        const payload = parsePromoPayload(req)
+    const duplicatePromo = await Promo.findOne({
+      code: payload.code,
+      _id: { $ne: PromoId },
+    });
 
-        const duplicatePromo = await Promo.findOne({
-            code: payload.code,
-            _id: { $ne: PromoId }
-        })
+    if (duplicatePromo) {
+      throw new AppError(400, "Promo code already exists");
+    }
 
-        if (duplicatePromo) {
-            throw new AppError(400, "Promo code already exists")
-        }
+    existingPromo.code = payload.code;
+    existingPromo.percentage = payload.percentage;
+    existingPromo.count = payload.count;
+    existingPromo.minimumOrderValue = payload.minimumOrderValue;
+    existingPromo.endAt = payload.endAt;
+    existingPromo.startAt = payload.startAt;
 
-        existingPromo.code = payload.code
-        existingPromo.percentage = payload.percentage
-        existingPromo.count = payload.count
-        existingPromo.minimumOrderValue = payload.minimumOrderValue,
-            existingPromo.endAt = payload.endAt
-        existingPromo.startAt = payload.startAt
+    await existingPromo.save();
 
-        await existingPromo.save()
+    res.json(
+      ok({
+        promos: await getAllPromos(),
+      }),
+    );
+  }),
+);
+AdminPromoRoute.delete(
+  "/promos/:id",
+  AsyncHandler(async (req: Request, res: Response) => {
+    const promoId = req.params.id;
+    requireText(String(promoId).trim(), "promo Id is required");
 
-        res.json(ok({
-            promos: await getAllPromos()
-        }))
-    })
+    const existingPromo = await Promo.findById(promoId);
 
-)
-AdminPromoRoute.delete('/promos/:id',
-    AsyncHandler(async (req: Request, res: Response) => {
-        const promoId = req.params.id
-        requireText(String(promoId).trim(), 'promo Id is required')
+    if (!existingPromo) {
+      throw new AppError(400, "Promo not found");
+    }
 
-        const existingPromo = await Promo.findById(promoId)
+    await Promo.findByIdAndDelete(promoId);
 
-        if (!existingPromo) {
-            throw new AppError(400, 'Promo not found')
-        }
+    res.json(
+      ok({
+        promos: await getAllPromos(),
+      }),
+    );
+  }),
+);
 
-        await Promo.findByIdAndDelete(promoId)
-
-        res.json(ok({
-            promos: await getAllPromos()
-        }))
-    })
-
-)
-
-export default AdminPromoRoute
+export default AdminPromoRoute;

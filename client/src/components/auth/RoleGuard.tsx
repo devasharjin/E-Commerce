@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store";
+import Loader from "../common/Loader";
 
 type Role = "admin" | "user";
 
@@ -13,7 +14,7 @@ export const RoleGuardLayout = ({
   const { user, isBootstrapped } = useAuthStore();
 
   if (!isBootstrapped) {
-    return null;
+    return <Loader/>
   }
 
   if (!user) {

@@ -108,3 +108,23 @@ export async function apiPut<TResponse, TBody = unknown>(
     throw new Error(error?.message || "Request failed");
   }
 }
+
+export async function apiDelete<TResponse>(
+  url : string,
+  config? : AxiosRequestConfig
+){
+  try{
+    const response = await api.delete<ApiEnvelope<TResponse>>(url,config)
+
+    if (response.data.status === "error" || !response.data.data) {
+      throw new Error(
+        response.data.errors?.[0]?.message || "Request failed"
+      );
+    }
+
+    return response.data.data;
+  }
+  catch(error : any){
+throw new Error(error?.message || "Request failed");
+  }
+}

@@ -1,11 +1,12 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth/store";
+import Loader from "../common/Loader";
 
 export const PublicOnlyLayout = () => {
   const { user, isBootstrapped } = useAuthStore();
 
   if (!isBootstrapped) {
-    return null; 
+    return <Loader/>
   }
 
   if (user) {

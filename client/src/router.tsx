@@ -8,7 +8,7 @@ import { ProtectedLayout } from "./components/auth/protectedLayout";
 import { RoleGuardLayout } from "./components/auth/RoleGuard";
 import AdminLayout from "./components/layout/adminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
-import AdminCoupons from "./pages/admin/Coupons";
+import AdminCoupons from "./pages/admin/Promos";
 import AdminOrders from "./pages/admin/Orders";
 import AdminProducts from "./pages/admin/Products";
 import AdminSettings from "./pages/admin/Settings";

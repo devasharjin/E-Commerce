@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { useBootstrapAuth } from "./usBootstrapAuth"
+import { useBootstrapAuth } from "./useBootstrapAuth"
 
 
 const AuthProvider = () => {

@@ -63,7 +63,7 @@ export function CategoryDialog({
 
     return <div>
         <Dialog open={open} onOpenChange={handleclose}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[60vh] flex flex-col">
                 <DialogHeader>
                     <DialogTitle>Categories</DialogTitle>
                 </DialogHeader>
@@ -84,7 +84,8 @@ export function CategoryDialog({
                         </Button>
                     </div>
 
-                    <div className="space-y-1">
+                    {/* Only this section scrolls */}
+                    <div className="space-y-1 max-h-64 overflow-y-auto pr-2">
                         {categories.map((cat) => (
                             <div
                                 key={cat._id}
