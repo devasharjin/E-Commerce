@@ -19,7 +19,7 @@ const upload = multer({
     }
 })
 
-const folderName = 'E-commerce/products'
+const folderName = 'E-commerce/banners'
 
 AdminSettingsRoute.use(requireAuth)
 AdminSettingsRoute.use(requireAdmin)
