@@ -124,6 +124,13 @@ export function CustomerMobileNavbar({ user }: customerMobileNavbarProps) {
             />
 
             <NavTextLink
+              href="/orders"
+              label="My Orders"
+              icon={User}
+              onClick={closeSheet}
+            />
+
+            <NavTextLink
               href="/wishlist"
               label="Wishlist"
               icon={User}

@@ -64,7 +64,7 @@ export function CustomerNavbar() {
 
                 <div className="hidden md:flex">
                     <NavTextLink
-                        href="/collection"
+                        href="/collections"
                         label="Collections"
                         icon={ShoppingBag}
                     />
@@ -95,6 +95,12 @@ export function CustomerNavbar() {
                                         <Link to={"/profile"} className="flex items-center gap-2">
                                             <User className="h-4 w-4" />
                                             <span>My Profile</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link to={"/orders"} className="flex items-center gap-2">
+                                            <User className="h-4 w-4" />
+                                            <span>My Orders</span>
                                         </Link>
                                     </DropdownMenuItem>
                                     {

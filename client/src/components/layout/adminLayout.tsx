@@ -54,6 +54,13 @@ export const AdminLayout = () => {
                   <span>My Profile</span>
                 </Link>
               </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <Link to={"/orders"} className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span>My Orders</span>
+                </Link>
+              </DropdownMenuItem>
               
               <DropdownMenuItem asChild>
                 <Link to="/" className="flex items-center gap-2">
