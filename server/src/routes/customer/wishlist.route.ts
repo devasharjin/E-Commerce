@@ -28,7 +28,7 @@ CustomerWishlistRoute.get('/wishlist',
 
 
 
-CustomerWishlistRoute.post('/cart',
+CustomerWishlistRoute.post('/wishlist',
     AsyncHandler(async (req: Request, res: Response) => {
         const dbUser = await extractDbUser(req)
         const productId = String(req.body.productId || "").trim()
@@ -67,10 +67,10 @@ CustomerWishlistRoute.post('/cart',
 )
 
 
-CustomerWishlistRoute.delete('/cart',
+CustomerWishlistRoute.delete('/wishlist/:id',
     AsyncHandler(async (req: Request, res: Response) => {
         const dbUser = await extractDbUser(req)
-        const productId = String(req.body.productId || "").trim()
+        const productId = String(req.params.id || "").trim()
 
         requireText(productId, 'Product Id not found')
 

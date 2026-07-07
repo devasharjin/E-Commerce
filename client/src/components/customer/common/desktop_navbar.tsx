@@ -4,6 +4,7 @@ import {
     LogIn,
     LogOut,
     ShoppingBag,
+    ShoppingBasketIcon,
     ShoppingCart,
     Store,
     User,
@@ -19,6 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { logout } from "@/features/auth/api";
 import { CustomerMobileNavbar } from "./mobile_navbar";
+import { wishlistStore } from "@/features/customer/wishlist/store";
+import { useGetCustomerWishlist } from "@/features/customer/wishlist/api";
+import WishlistDialog from "../wishlist/wishlist-dialog";
 
 function NavTextLink({
     href,
@@ -53,6 +57,13 @@ export function CustomerNavbar() {
         }
     };
 
+    const { setOpen } = wishlistStore()
+    const { data: wishlist } = useGetCustomerWishlist()
+
+    const wishlistCount = wishlist?.length
+    console.log(wishlistCount);
+
+
     return (
         <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
@@ -70,15 +81,27 @@ export function CustomerNavbar() {
                     />
                 </div>
 
-                <div className="flex items-center gap-3">
 
-                    <nav className="hidden md:flex">
-                        <NavTextLink
-                            href="/wishlist"
-                            label="Wishlist"
-                            icon={Heart}
-                        />
-                    </nav>
+
+                <div className="flex items-center gap-3 ">
+                    {
+                        user ?
+                            <nav
+                                onClick={() => setOpen(true)}
+                                className="hidden md:flex relative">
+                                <div
+                                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                                >
+                                    <Heart className="h-4 w-4" />
+                                    <p>Wishlist</p>
+                                </div>
+                                <span className="absolute right-16 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                                    {wishlistCount}
+                                </span>
+                            </nav>
+                            : null
+                    }
+
 
                     {user ? (
                         <div className="hidden md:flex">
@@ -99,18 +122,18 @@ export function CustomerNavbar() {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
                                         <Link to={"/orders"} className="flex items-center gap-2">
-                                            <User className="h-4 w-4" />
+                                            <ShoppingBasketIcon className="h-4 w-4" />
                                             <span>My Orders</span>
                                         </Link>
                                     </DropdownMenuItem>
                                     {
-                                        user.role==='admin' && 
+                                        user.role === 'admin' &&
                                         <DropdownMenuItem asChild>
-                                        <Link to={"/admin"} className="flex items-center gap-2">
-                                            <User className="h-4 w-4" />
-                                            <span>Admin Panel</span>
-                                        </Link>
-                                    </DropdownMenuItem>
+                                            <Link to={"/admin"} className="flex items-center gap-2">
+                                                <User className="h-4 w-4" />
+                                                <span>Admin Panel</span>
+                                            </Link>
+                                        </DropdownMenuItem>
                                     }
 
                                     <DropdownMenuItem onClick={handleLogout}>
@@ -142,6 +165,7 @@ export function CustomerNavbar() {
                     </div>
                 </div>
             </div>
+            <WishlistDialog />
         </header>
     );
 }

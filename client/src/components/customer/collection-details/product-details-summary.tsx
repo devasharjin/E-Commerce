@@ -6,6 +6,9 @@ import type { Product } from "@/features/customer/collections/types";
 import { formatMoney } from "@/lib/utils";
 import { Heart, ShoppingCart } from "lucide-react";
 import ProductOptionsGroup from "./product-options-group";
+import { useAuthStore } from "@/features/auth/store";
+import { useDeleteCustomerWishlist, useGetCustomerWishlist, useUpdateCustomerWishlist } from "@/features/customer/wishlist/api";
+import { toast } from "sonner";
 
 type ProductDetailsSummaryProps = {
   product: Product;
@@ -24,6 +27,33 @@ const ProductDetailsSummary = ({
 }: ProductDetailsSummaryProps) => {
   const salePrice = getSalePrice(product);
   const hasSale = !!product.salesPercentage;
+
+  const { user } = useAuthStore()
+
+  const updateWishlistMutation = useUpdateCustomerWishlist()
+  const deleteWishlistMutation = useDeleteCustomerWishlist()
+
+  const {data:wishlist, isLoading} = useGetCustomerWishlist()
+
+  const isWishlisted = wishlist?.some(
+    (item) => String(item.id) === String(product._id)
+  );
+
+  function handleWishlistToggle(productId: string) {
+    if(!user){
+      toast.error('Login to Save')
+    }
+
+    if(isLoading) return
+    
+    if (isWishlisted) {
+      deleteWishlistMutation.mutate(productId)
+      toast.success('Deleted from wishlist')
+    } else {
+      updateWishlistMutation.mutate(productId)
+      toast.success('Saved to wishlist')
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -117,13 +147,21 @@ const ProductDetailsSummary = ({
 
       {/* Buttons */}
       <div className="flex gap-4">
-        <Button size="lg" className="flex-1" disabled={product.stock===0} >
+        <Button size="lg" className="flex-1" disabled={product.stock === 0} >
           <ShoppingCart className="mr-2 h-5 w-5" />
           Add to Cart
         </Button>
 
-        <Button size="lg" variant="outline">
-          <Heart className="h-5 w-5" />
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={() => handleWishlistToggle(product._id)}
+          disabled={isLoading}
+        >
+          <Heart
+            className={`h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""
+              }`}
+          />
         </Button>
       </div>
 
