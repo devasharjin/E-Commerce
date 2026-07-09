@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Product, ProductFormState, ProductImage } from "./type"
+import type { Product, ProductAddressBodyForm, ProductImage } from "./type"
 import { createAdminProduct, updateAdminProduct } from "./api"
 
 
@@ -12,7 +12,7 @@ type HandleProductFormProps = {
     product: Product | null
 }
 
-export function getEmptyForm(): ProductFormState {
+export function getEmptyForm(): ProductAddressBodyForm {
     return {
         title: '',
         description: '',
@@ -35,7 +35,7 @@ export function getCoverImage(images: ProductImage[] = []) {
     return images.find((img) => img.isCover) ?? images[0]
 }
 
-export function mapProductToFormValues(product: Product): ProductFormState {
+export function mapProductToFormValues(product: Product): ProductAddressBodyForm {
     const cover = getCoverImage(product.images)
     return {
         title: product.title,
@@ -63,7 +63,7 @@ export function useProductForm({
     onSaved,
     product
 }: HandleProductFormProps) {
-    const [form, setForm] = useState<ProductFormState>(getEmptyForm())
+    const [form, setForm] = useState<ProductAddressBodyForm>(getEmptyForm())
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
@@ -102,9 +102,9 @@ export function useProductForm({
         }))
     }
 
-    function updateField<K extends keyof ProductFormState>(
+    function updateField<K extends keyof ProductAddressBodyForm>(
         key: K,
-        value: ProductFormState[K]
+        value: ProductAddressBodyForm[K]
     ) {
         setForm((prev) => ({
             ...prev,

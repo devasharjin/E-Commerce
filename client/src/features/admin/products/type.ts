@@ -69,7 +69,7 @@ export type UpdateProductBody = {
   coverImagePublicId?: string;
 };
 
-export type ProductFormState = {
+export type ProductAddressBodyForm = {
   title: string;
   description: string;
   category: string;

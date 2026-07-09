@@ -23,6 +23,8 @@ import { CustomerMobileNavbar } from "./mobile_navbar";
 import { wishlistStore } from "@/features/customer/wishlist/store";
 import { useGetCustomerWishlist } from "@/features/customer/wishlist/api";
 import WishlistDialog from "../wishlist/wishlist-dialog";
+import { ProfileStore } from "@/features/customer/Address/store";
+import ProfileDialog from "../profile/profile-dialog";
 
 function NavTextLink({
     href,
@@ -46,6 +48,7 @@ function NavTextLink({
 
 export function CustomerNavbar() {
     const { user, clearAuth } = useAuthStore();
+    const setOpenProfile = ProfileStore((state) => state.setOpen);
 
     const handleLogout = async () => {
         try {
@@ -115,10 +118,12 @@ export function CustomerNavbar() {
 
                                 <DropdownMenuContent align="end" className="w-52">
                                     <DropdownMenuItem asChild>
-                                        <Link to={"/profile"} className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setOpenProfile(true)}
+                                            className="flex items-center gap-2 w-full">
                                             <User className="h-4 w-4" />
                                             <span>My Profile</span>
-                                        </Link>
+                                        </button>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
                                         <Link to={"/orders"} className="flex items-center gap-2">
@@ -166,6 +171,7 @@ export function CustomerNavbar() {
                 </div>
             </div>
             <WishlistDialog />
+            <ProfileDialog />
         </header>
     );
 }

@@ -3,7 +3,6 @@ import CustomerLayout from "./components/layout/customerLayout";
 import { PublicOnlyLayout } from "./components/auth/PublicOnlyLayout";
 import GoogleSignIn from "./pages/auth/GoogleLogin";
 import CustomerHomePage from "./pages/customer/HomePage";
-import CustomerProfile from "./pages/customer/Profile";
 import { ProtectedLayout } from "./components/auth/protectedLayout";
 import { RoleGuardLayout } from "./components/auth/RoleGuard";
 import AdminLayout from "./components/layout/adminLayout";
@@ -53,10 +52,6 @@ export const router = createBrowserRouter([
           {
             element: <ProtectedLayout />,
             children: [
-              {
-                path: "profile",
-                element: <CustomerProfile />,
-              },
             ],
           },
         ],
