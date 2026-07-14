@@ -9,6 +9,8 @@ import ProductOptionsGroup from "./product-options-group";
 import { useAuthStore } from "@/features/auth/store";
 import { useDeleteCustomerWishlist, useGetCustomerWishlist, useUpdateCustomerWishlist } from "@/features/customer/wishlist/api";
 import { toast } from "sonner";
+import { useCartAndCheckoutStore } from "@/features/customer/cart-with-checkout/store";
+import { useAllCart, useCreateCart, useDeleteCart } from "@/features/customer/cart-with-checkout/hooks";
 
 type ProductDetailsSummaryProps = {
   product: Product;
@@ -33,19 +35,20 @@ const ProductDetailsSummary = ({
   const updateWishlistMutation = useUpdateCustomerWishlist()
   const deleteWishlistMutation = useDeleteCustomerWishlist()
 
-  const {data:wishlist, isLoading} = useGetCustomerWishlist()
+  const { data: wishlist, isLoading } = useGetCustomerWishlist()
 
   const isWishlisted = wishlist?.some(
     (item) => String(item.id) === String(product._id)
   );
 
+
   function handleWishlistToggle(productId: string) {
-    if(!user){
+    if (!user) {
       toast.error('Login to Save')
     }
 
-    if(isLoading) return
-    
+    if (isLoading) return
+
     if (isWishlisted) {
       deleteWishlistMutation.mutate(productId)
       toast.success('Deleted from wishlist')
@@ -53,6 +56,57 @@ const ProductDetailsSummary = ({
       updateWishlistMutation.mutate(productId)
       toast.success('Saved to wishlist')
     }
+  }
+
+  const { user: isUser } = useAuthStore(state => state)
+  const { onAdd, cart: guestCart, onRemove } = useCartAndCheckoutStore()
+  const AddToCartMutation = useCreateCart()
+  const removeCartMutation = useDeleteCart()
+  const { data: serverCart } = useAllCart()
+
+  
+
+  const existedCart = user ?
+
+    serverCart?.items.find(item =>
+
+      String(item.id) === String(product._id) &&
+      item.color === selectedColor &&
+      item.size === selectedSize
+
+    ) : guestCart.find(item =>
+      String(item?.id) === String(product._id)
+      && item.color === selectedColor
+      && item.size === selectedSize
+    )
+
+  function handleCartAction() {
+    if (existedCart) {
+      if (isUser) {
+        removeCartMutation.mutate({
+          id: product._id, color: selectedColor,
+          size: selectedSize as "S" | "M" | "L" | "XL"
+        });
+      } else {
+        onRemove(product._id, selectedColor, selectedSize as "S" | "M" | "L" | "XL");
+      }
+
+      toast.success("Removed from cart");
+      return;
+    }
+
+    if (isUser) {
+      AddToCartMutation.mutate({
+        id: product._id,
+        quantity: 1,
+        color: selectedColor,
+        size: selectedSize as "S" | "M" | "L" | "XL",
+      });
+    } else {
+      onAdd(product, 1, selectedColor, selectedSize as "S" | "M" | "L" | "XL");
+    }
+
+    toast.success("Added to cart");
   }
 
   return (
@@ -147,9 +201,12 @@ const ProductDetailsSummary = ({
 
       {/* Buttons */}
       <div className="flex gap-4">
-        <Button size="lg" className="flex-1" disabled={product.stock === 0} >
+        <Button
+          size="lg"
+          onClick={handleCartAction}
+          className="flex-1" disabled={product.stock === 0} >
           <ShoppingCart className="mr-2 h-5 w-5" />
-          Add to Cart
+          {existedCart ? "Remove From Cart" : "Add to Cart"}
         </Button>
 
         <Button

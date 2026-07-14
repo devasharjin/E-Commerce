@@ -33,7 +33,7 @@ const cartItemSchema = new Schema<CartItem>({
         type: String,
         enum: ['S', 'M', 'L', 'XL']
     }
-}, { _id: false })
+}, { _id: false ,timestamps : true})
 
 const cartSchema = new Schema<ICart>({
     user: {

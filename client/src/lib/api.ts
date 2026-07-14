@@ -49,7 +49,7 @@ export async function apiGet<T>(
   try {
     const response = await api.get<ApiEnvelope<T>>(url, config);
 
-    if (response.data.status === "error" || !response.data.data) {
+    if (response.data.status === "error") {
       throw new Error(
         response.data.errors?.[0]?.message || "Request failed"
       );
@@ -73,7 +73,7 @@ export async function apiPost<TResponse, TBody = unknown>(
       config
     );
 
-    if (response.data.status === "error" || !response.data.data) {
+    if (response.data.status === "error") {
       throw new Error(
         response.data.errors?.[0]?.message || "Request failed"
       );

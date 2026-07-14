@@ -29,7 +29,7 @@ CustomerCartRoute.post('/cart',
         const productId = String(req.body.id || "").trim()
         const quantity = Number(req.body.quantity)
         const colorValue = String(req.body.color || "").trim()
-        const sizeValue = String(req.body.size || "").trim() as ProductSize
+        const sizeValue = String(req.body.size || "").trim() as ProductSize       
 
         requireText(productId, 'Product Id is required')
         if (Number.isNaN(quantity) || quantity < 1) {
@@ -130,7 +130,7 @@ CustomerCartRoute.put('/cart/item',
             checkSameProduct(item, String(productId), color, size)
         )
 
-        if (itemIndex === -1) {
+        if (itemIndex < 0 ) {
             throw new AppError(400, 'Product is not in the cart')
         }
         else {
@@ -150,10 +150,20 @@ CustomerCartRoute.put('/cart/item',
 CustomerCartRoute.delete('/cart',
     AsyncHandler(async (req: Request, res: Response) => {
         const dbUser = await extractDbUser(req)
+        
+        console.log(req.query.id);
+        console.log(req.query.color);
+        
+        
 
-        const productId = String(req.body.id || "").trim()
-        const color = String(req.body.color || "").trim()
-        const size = String(req.body.size || "").trim() as ProductSize
+        const productId = String(req.query.id || "").trim()
+        const color = String(req.query.color || "").trim()
+        const size = String(req.query.size || "").trim() as ProductSize
+
+        console.log(productId);
+        console.log(color);
+        console.log(size);
+        // console.log(quantity);
 
         requireText(productId, 'Product Id is required')
 
@@ -185,6 +195,9 @@ CustomerCartRoute.post('/cart/sync',
 
         const incomingItems = Array.isArray(req.body.items) ?
             req.body.items as SyncCartItem[] : [];
+
+        console.log(incomingItems);
+        
 
         let cart = await Cart.findOne({
              user: dbUser._id,

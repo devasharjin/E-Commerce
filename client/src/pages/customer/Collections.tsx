@@ -40,12 +40,13 @@ function Collections() {
       </div>
     );
   }
+  
 
   return (
 
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-rose-50 via-pink-50 to-white">
+      <section className="relative overflow-hidden border-b bg-linear-to-br from-rose-50 via-pink-50 to-white">
         <div className="absolute -top-32 right-0 h-80 w-80 rounded-full bg-pink-300/20 blur-3xl" />
         <div className="absolute -bottom-32 left-0 h-80 w-80 rounded-full bg-rose-300/20 blur-3xl" />
 
@@ -129,7 +130,7 @@ function Collections() {
                   changesort(value as ProductSort)
                 }
               >
-                <SelectTrigger className="w-[220px]">
+                <SelectTrigger className="w-55">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
 
@@ -167,7 +168,7 @@ function Collections() {
           {/* Products */}
           <main>
             {products.length === 0 ? (
-              <Card className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border-dashed">
+              <Card className="flex min-h-100 flex-col items-center justify-center rounded-2xl border-dashed">
                 <div className="space-y-3 text-center">
                   <h3 className="text-2xl font-semibold">No Products Found</h3>
 

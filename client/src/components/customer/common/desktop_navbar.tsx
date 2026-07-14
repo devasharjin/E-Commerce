@@ -25,6 +25,10 @@ import { useGetCustomerWishlist } from "@/features/customer/wishlist/api";
 import WishlistDialog from "../wishlist/wishlist-dialog";
 import { ProfileStore } from "@/features/customer/Address/store";
 import ProfileDialog from "../profile/profile-dialog";
+import { useCartAndCheckoutStore } from "@/features/customer/cart-with-checkout/store";
+import CartAndCheckoutDrawer from "../cart-with-checkout/cart-and-checkout-drawer";
+import { useAllCart, useSyncCart } from "@/features/customer/cart-with-checkout/hooks";
+import { useEffect } from "react";
 
 function NavTextLink({
     href,
@@ -65,6 +69,30 @@ export function CustomerNavbar() {
 
     const wishlistCount = wishlist?.length
     console.log(wishlistCount);
+
+    const { setOpen: SetCartOpen } = useCartAndCheckoutStore()
+    const {cart : guestCart,clearCart,getCartQuantity} = useCartAndCheckoutStore()
+
+    const cartSyncmutation = useSyncCart()
+    const { data : serverCart} = useAllCart()
+
+    const syncCart = guestCart.map(item => {
+        return {
+            product: item.id,
+            quantity : item.quantity,
+            color : item.color,
+            size : item.size
+        }
+    })
+
+    const CartQuantity = getCartQuantity()
+
+    useEffect(()=>{
+        if(user){
+            cartSyncmutation.mutate(syncCart)
+            clearCart()
+        }
+    },[user])
 
 
     return (
@@ -154,16 +182,16 @@ export function CustomerNavbar() {
                         </div>
                     )}
 
-                    <Link
-                        to={"/orders"}
+                    <div
+                        onClick={() => SetCartOpen(true)}
                         className="relative flex items-center justify-center rounded-lg p-2 transition-all hover:bg-muted"
                     >
                         <ShoppingCart className="h-5 w-5" />
 
                         <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                            {0}
+                            {user ? serverCart?.totalQuantity : CartQuantity}
                         </span>
-                    </Link>
+                    </div>
 
                     <div className="md:hidden">
                         <CustomerMobileNavbar user={!!user} />
@@ -172,6 +200,7 @@ export function CustomerNavbar() {
             </div>
             <WishlistDialog />
             <ProfileDialog />
+            <CartAndCheckoutDrawer />
         </header>
     );
 }

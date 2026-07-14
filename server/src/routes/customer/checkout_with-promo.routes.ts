@@ -13,17 +13,20 @@ import Order from "../../models/order.js";
 
 export const checkoutWithPromoRouter = Router()
 
+checkoutWithPromoRouter.use(requireAuth);
+
 checkoutWithPromoRouter.get('/points',
     AsyncHandler(async (req: Request, res: Response) => {
         const dbUser = await extractDbUser(req)
 
         const points = dbUser.points || 0
+        console.log(points);
+        
 
         res.json(ok(points))
     })
 )
 
-checkoutWithPromoRouter.use(requireAuth)
 
 checkoutWithPromoRouter.post('/checkout/pay-with-points',
     AsyncHandler(async (req: Request, res: Response) => {
