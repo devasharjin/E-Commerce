@@ -90,7 +90,7 @@ customerOrderRouter.post('/orders/return/:id', AsyncHandler(async (req: Request,
     await foundOrder.save()
 
     res.status(201).json(ok({
-        _id: String(foundOrder._id),
+        id: String(foundOrder._id),
         orderStatus: foundOrder.orderStatus,
         returnedAt: foundOrder.returnedAt,
     }))

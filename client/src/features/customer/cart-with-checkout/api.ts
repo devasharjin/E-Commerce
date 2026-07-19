@@ -1,5 +1,5 @@
 import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/api";
-import type { ApplyPromo, ApplyPromoResponse, Cart, CartBody, CartItem, CreateCheckoutBody, CreateCheckoutResponse, DeleteCartBody, PointsResponse, syncCart, syncItem, verifyCheckoutBody, verifyCheckoutResponse } from "./types";
+import type { ApplyPromo, ApplyPromoResponse, Cart, CartBody, CreateCheckoutBody, CreateCheckoutResponse, DeleteCartBody, PointsResponse, syncCart, syncItem, verifyCheckoutBody, verifyCheckoutResponse } from "./types";
 
 export function getCartApi() {
   return apiGet<Cart>("/customer/cart");
@@ -45,5 +45,5 @@ export function getPointsApi() {
 }
 
 export function payWithPointsApi (body : CreateCheckoutBody){
-  return apiPost<CreateCheckoutResponse,CreateCheckoutBody>('/customer//checkout/pay-with-points',body)
+  return apiPost<CreateCheckoutResponse,CreateCheckoutBody>('/customer/checkout/pay-with-points',body)
 }

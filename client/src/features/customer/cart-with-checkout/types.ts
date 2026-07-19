@@ -74,9 +74,9 @@ export type verifyCheckoutResponse = {
 
 export type verifyCheckoutBody = {
   orderId: string;
-  razorpayOrderId: string;
-  razorpayPaymentId: string;
-  razorpaySignature: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
 };
 
 export type ApplyPromo = {

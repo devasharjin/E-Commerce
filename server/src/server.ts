@@ -61,9 +61,9 @@ app.use("/customer", customerAddressRoute);
 app.use("/customer", CustomerPromoRoute);
 app.use("/customer", CustomerCartRoute);
 app.use("/customer", CustomerWishlistRoute);
-app.use("customer", CustomerCheckoutRouter);
+app.use("/customer", CustomerCheckoutRouter);
 app.use("/customer", checkoutWithPromoRouter);
-app.use("customer", customerOrderRouter);
+app.use("/customer", customerOrderRouter);
 app.use("/custommer", CustomerHomeRoutes);
 
 //middleware

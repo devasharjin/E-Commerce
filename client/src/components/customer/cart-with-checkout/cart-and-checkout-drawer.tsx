@@ -14,6 +14,7 @@ import {
 
 import CustomerCartListing from "./cart-listing"
 import { formatMoney } from "@/lib/utils"
+import { usePayWithRazorpay } from "./payment-helper"
 
 const CartAndCheckoutDrawer = () => {
   const {
@@ -86,6 +87,9 @@ const CartAndCheckoutDrawer = () => {
       </div>
     )
   }
+
+
+  const { PayRazorpay,PayWithPoints} = usePayWithRazorpay()
 
   return (
     <Drawer open={isOpen} onOpenChange={setOpen}>
@@ -235,13 +239,19 @@ const CartAndCheckoutDrawer = () => {
             {user && (
               <div className="border-t bg-background p-6 space-y-3">
                 <Button
+                  onClick={() => PayWithPoints(defaultAddress?._id, AppliedPromo)}
                   className="w-full"
                   variant="outline"
                 >
                   Pay With Points
                 </Button>
 
-                <Button className="w-full">
+                <Button 
+                onClick={()=>{
+                    PayRazorpay(defaultAddress?._id, AppliedPromo)
+                  setOpen(false)
+                }}
+                className="w-full">
                   Pay with Razorpay
                 </Button>
               </div>
