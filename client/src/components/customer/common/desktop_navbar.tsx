@@ -29,6 +29,8 @@ import { useCartAndCheckoutStore } from "@/features/customer/cart-with-checkout/
 import CartAndCheckoutDrawer from "../cart-with-checkout/cart-and-checkout-drawer";
 import { useAllCart, useSyncCart } from "@/features/customer/cart-with-checkout/hooks";
 import { useEffect } from "react";
+import { useOrderStore } from "@/features/customer/Orders/store";
+import CustomerOrderDialog from "../orders/order-dialog";
 
 function NavTextLink({
     href,
@@ -94,6 +96,8 @@ export function CustomerNavbar() {
         }
     },[user])
 
+    const {setOpen : orderDialogOpen} = useOrderStore()
+
 
     return (
         <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
@@ -153,11 +157,9 @@ export function CustomerNavbar() {
                                             <span>My Profile</span>
                                         </button>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link to={"/orders"} className="flex items-center gap-2">
+                                    <DropdownMenuItem onClick={()=>orderDialogOpen(true)} className="flex items-center gap-2">
                                             <ShoppingBasketIcon className="h-4 w-4" />
                                             <span>My Orders</span>
-                                        </Link>
                                     </DropdownMenuItem>
                                     {
                                         user.role === 'admin' &&
@@ -201,6 +203,7 @@ export function CustomerNavbar() {
             <WishlistDialog />
             <ProfileDialog />
             <CartAndCheckoutDrawer />
+            <CustomerOrderDialog />
         </header>
     );
 }
