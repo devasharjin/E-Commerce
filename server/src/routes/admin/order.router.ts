@@ -25,7 +25,7 @@ AdminOrderRouter.get('/orders',
 
         res.json(ok({
             orders: order.map(item => ({
-                _id: item._id,
+                id: item._id,
                 code: String(item._id).slice(-8).toUpperCase(),
                 customerName: item.customerName,
                 customerEmail: item.customerEmail,
@@ -106,7 +106,7 @@ AdminOrderRouter.put('/orders/:id',
         await foundOrder.save()
 
         res.json(ok({
-            _id: String(foundOrder._id,),
+            id: String(foundOrder._id,),
             orderStatus: foundOrder.orderStatus,
             deliveredAt: foundOrder.deliveredAt,
             returnedAt: foundOrder.returnedAt,
