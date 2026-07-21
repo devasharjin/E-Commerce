@@ -6,17 +6,21 @@ import {
   usePoints,
   useVerifyCheckout,
 } from "@/features/customer/cart-with-checkout/hooks";
+import { useCartAndCheckoutStore } from "@/features/customer/cart-with-checkout/store";
 import { env } from "@/lib/env";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export function usePayWithRazorpay() {
   const { user } = useAuthStore();
   const { data: cart } = useAllCart();
   const { data: points } = usePoints();
+  const { setOpen} = useCartAndCheckoutStore()
 
   const { mutateAsync: PayWithPointsMutation } = usePayWithPoinnts();
   const { mutateAsync: checkoutMutate } = useCreateCheckout();
   const { mutateAsync: verifyCheckout } = useVerifyCheckout();
+  const navigate = useNavigate()
 
   async function PayRazorpay(addressId?: string, promoCode?: string) {    
     if (!user) {
@@ -56,6 +60,8 @@ export function usePayWithRazorpay() {
               razorpay_signature: response.razorpay_signature,
             });
 
+            navigate("/order-success");
+
             toast.success("Payment Successful");
           } catch {
             toast.error("Payment verification failed");
@@ -69,46 +75,46 @@ export function usePayWithRazorpay() {
     }
   }
 
-  function PayWithPoints(addressId?: string, promoCode?: string) {
-    console.log(addressId);
-    
-    if (!user) {
-      return toast.error("Login to Continue");
-    }
+ async function PayWithPoints(addressId?: string, promoCode?: string) {
+   if (!user) {
+     return toast.error("Login to Continue");
+   }
 
-    if (!addressId) {
-      return toast.error("Add Default address in the profile");
-    }
+   if (!addressId) {
+     return toast.error("Add Default address in the profile");
+   }
 
-    if (!cart?.items.length) {
-      return toast.error("Cart is Empty.");
-    }
+   if (!cart?.items.length) {
+     return toast.error("Cart is Empty.");
+   }
 
-    const finalPrice = cart.items.reduce((sum, item) => {
-      return sum + item.price;
-    }, 0);
+   const finalPrice = cart.items.reduce((sum, item) => {
+     return sum + item.price;
+   }, 0);
 
+   if (!points) {
+     return toast.error("Not Enough points");
+   }
 
-    console.log(points);
-    
-    if(!points){
-      return toast.error('Not Enough points')
-    }
+   if (finalPrice > points.points) {
+     return toast.error("Not Enough Points");
+   }
 
-    if (finalPrice > points?.points){
-      return toast.error('Not Enough Points')
-    }
+   try {
+    setOpen(false)
+     await PayWithPointsMutation({
+       addressid: addressId,
+       promoCode: promoCode || "",
+     });
 
-    try {
-      
-      PayWithPointsMutation({addressid : addressId, promoCode : promoCode || ''})
+     navigate("/order-success");
 
-      toast.error('Order placed Successfully')
-    } catch  {
-      toast.error('Order Failed')
-    }
-
-  }
+     toast.success("Order placed Successfully");
+   } catch (error) {
+     console.error(error);
+     toast.error("Order Failed");
+   }
+ }
 
   return {
     PayRazorpay,

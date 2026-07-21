@@ -14,7 +14,7 @@ CustomerHomeRoutes.get(
     const date = new Date();
 
     const [banner, categories, products, coupons] = await Promise.all([
-      Banner.find().sort({ createdAt: -1 }).lean().limit(6),
+      Banner.find().sort({ createdAt: 1 }).lean().limit(6),
       Category.find().sort({ name: 1 }).lean(),
       Product.find({ 
         status: "active", stock: { $gte: 1 } 

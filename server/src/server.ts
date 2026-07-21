@@ -56,6 +56,7 @@ app.use("/admin", AdminSettingsRoute);
 app.use("/admin", AdminDashboardRoute);
 
 //Customer Routes
+app.use("/customer", CustomerHomeRoutes);
 app.use("/customer", customerProductRoute);
 app.use("/customer", customerAddressRoute);
 app.use("/customer", CustomerPromoRoute);
@@ -64,7 +65,6 @@ app.use("/customer", CustomerWishlistRoute);
 app.use("/customer", CustomerCheckoutRouter);
 app.use("/customer", checkoutWithPromoRouter);
 app.use("/customer", customerOrderRouter);
-app.use("/custommer", CustomerHomeRoutes);
 
 //middleware
 
